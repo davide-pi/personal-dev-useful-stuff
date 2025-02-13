@@ -1,0 +1,96 @@
+{
+    "$help": "https://aka.ms/terminal-documentation",
+    "$schema": "https://aka.ms/terminal-profiles-schema",
+    "actions": [
+        {
+            "command": "copy",
+            "keys": "ctrl+c"
+        },
+        {
+            "command": "paste",
+            "keys": "ctrl+v"
+        },
+        {
+            "command": "find",
+            "keys": "ctrl+f"
+        }
+    ],
+    "alwaysShowNotificationIcon": false,
+    "copyFormatting": "none",
+    "copyOnSelect": false,
+    "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+    "disableAnimations": false,
+    "initialCols": 120,
+    "newTabMenu": [
+        {
+            "type": "profile",
+            "profile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}"
+        },
+        {
+            "type": "profile",
+            "profile": "{e42a0d95-558d-4755-92bf-0902eef350da}"
+        },
+        {
+            "type": "profile",
+            "profile": "{dee4ade3-46d7-45a6-99ca-a1da5eb2221d}"
+        },
+        {
+            "allowEmpty": false,
+            "entries": [
+                {
+                    "type": "remainingProfiles"
+                }
+            ],
+            "icon": "C:\\path\\to\\icon.png",
+            "inline": "never",
+            "name": "Others",
+            "type": "folder"
+        }
+    ],
+    "profiles": {
+        "defaults": {
+            "colorScheme": "One Half Dark",
+            "elevate": true,
+            "hidden": false,
+            "padding": "2",
+            "historySize": 9999
+        },
+        "list": [
+            {
+                "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+                "hidden": false,
+                "name": "PowerShell",
+                "source": "Windows.Terminal.PowershellCore"
+            },
+            {
+                "commandline": "C:\\Program Files\\Git\\bin\\bash.exe",
+                "guid": "{e42a0d95-558d-4755-92bf-0902eef350da}",
+                "icon": "C:\\Program Files\\Git\\mingw64\\share\\git\\git-for-windows.ico",
+                "name": "Git Bash",
+                "startingDirectory": "C:\\__Workspaces\\Git"
+            },
+            {
+                "guid": "{dee4ade3-46d7-45a6-99ca-a1da5eb2221d}",
+                "hidden": false,
+                "name": "C# Repl",
+                "commandline": "csharprepl -f \"Microsoft.AspNetCore.App\" -u \"System\" -u \"System.Collections.Generic\" -u \"System.IO\" -u \"System.Linq\" -u \"System.Net.Http\" -u \"System.Threading\" -u \"System.Threading.Tasks\" -u \"System.Net.Http.Json\" -u \"Microsoft.AspNetCore.Builder\" -u \"Microsoft.AspNetCore.Hosting\" -u \"Microsoft.AspNetCore.Http\" -u \"Microsoft.AspNetCore.Routing\" -u \"Microsoft.Extensions.Configuration\" -u \"Microsoft.Extensions.DependencyInjection\" -u \"Microsoft.Extensions.Hosting\" -u \"Microsoft.Extensions.Logging\" -u \"System.Text.RegularExpressions\" -u \"System.Text.Json\" -r \"Nuget:spectre.console\" -u \"Spectre.Console\"",
+                "icon": "https://raw.githubusercontent.com/davide-pi/utilities/refs/heads/main/terminal/icons/csharp.png"
+            },
+            {
+                "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+                "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+                "name": "Windows PowerShell"
+            },
+            {
+                "commandline": "%SystemRoot%\\System32\\cmd.exe",
+                "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+                "name": "Command Prompt"
+            }
+        ]
+    },
+    "schemes": [],
+    "showTerminalTitleInTitlebar": true,
+    "startOnUserLogin": false,
+    "themes": [],
+    "useAcrylicInTabRow": true
+}

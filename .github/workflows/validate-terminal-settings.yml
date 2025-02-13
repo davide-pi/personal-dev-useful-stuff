@@ -1,0 +1,32 @@
+name: CI Terminal Icons
+
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "terminal/**"
+      - ".github/workflows/validate-terminal-settings.yml"
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - "terminal/**"
+      - ".github/workflows/validate-terminal-settings.yml"
+
+jobs:
+  check_terminal_settings:
+    name: Check Terminal Settings
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check if it is a valid JSON
+        shell: pwsh
+        run: |
+          $settingFileRelativePath = '.\terminal\settings.json';
+          if (-not (Test-Json -Path $settingFileRelativePath)) {
+            Write-Host "$($settingFileRelativePath) is not a valid JSON";
+            exit 1;
+          }

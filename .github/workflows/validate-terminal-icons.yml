@@ -1,0 +1,44 @@
+name: CI Terminal Settings
+
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "terminal/**"
+      - ".github/workflows/validate-terminal-icons.yml"
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - "terminal/**"
+      - ".github/workflows/validate-terminal-icons.yml"
+
+jobs:
+  check_terminal_profile_icons:
+    name: Check That Terminal Profile Icons Exists
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check if expected icons in the repos exists
+        shell: pwsh
+        run: |
+          $terminalSettingsContent = ConvertFrom-Json -InputObject (Get-Content -Path '.\terminal\settings.json' -Raw);
+          $profilesIconsInThisRepo = $terminalSettingsContent.profiles.list.icon | Where-Object {
+            $_ -like '*/davide-pi/utilities/refs/heads/main/terminal/icons/*';
+          }
+
+          if ( $profilesIconsInThisRepo.Length -eq 0) {
+              Write-Host 'No icons to check';
+              exit 0;
+          }
+
+          $profilesIconsInThisRepo | ForEach-Object {
+            $iconRelativePath = [regex]::Match($_, 'terminal/icons/.*').Value
+            if (-not (Test-Path -Path "./$($iconRelativePath)")) {
+              Write-Host "Icon $($iconRelativePath) not found";
+              exit 1;
+            }
+          }
