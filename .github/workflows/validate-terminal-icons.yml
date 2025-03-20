@@ -35,11 +35,16 @@ jobs:
             exit 0;
           }
 
+          $inError = $false
           $profilesIconsInThisRepo | ForEach-Object {
             $result = Invoke-WebRequest -Method Get -Uri $_ -SkipHttpErrorCheck
 
             if ($result.StatusCode -ne 200) {
               Write-Host "Icon at '$($_)' not found";
-              exit 1;
+              $inError = $true
             }
+          }
+
+          if ($inError) {
+            exit 1
           }
