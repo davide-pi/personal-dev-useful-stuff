@@ -74,7 +74,7 @@
                 "hidden": false,
                 "name": "C# Repl",
                 "commandline": "csharprepl -f \"Microsoft.AspNetCore.App\" -u \"System\" -u \"System.Collections.Generic\" -u \"System.IO\" -u \"System.Linq\" -u \"System.Net.Http\" -u \"System.Threading\" -u \"System.Threading.Tasks\" -u \"System.Net.Http.Json\" -u \"Microsoft.AspNetCore.Builder\" -u \"Microsoft.AspNetCore.Hosting\" -u \"Microsoft.AspNetCore.Http\" -u \"Microsoft.AspNetCore.Routing\" -u \"Microsoft.Extensions.Configuration\" -u \"Microsoft.Extensions.DependencyInjection\" -u \"Microsoft.Extensions.Hosting\" -u \"Microsoft.Extensions.Logging\" -u \"System.Text.RegularExpressions\" -u \"System.Text.Json\"",
-                "icon": "https://raw.githubusercontent.com/davide-pi/utilities/refs/heads/main/terminal/icons/csharp.png"
+                "icon": "https://raw.githubusercontent.com/davide-pi/personal-dev-useful-stuff/refs/heads/main/terminal/icons/csharp.png"
             },
             {
                 "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
