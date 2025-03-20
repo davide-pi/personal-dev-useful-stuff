@@ -27,18 +27,19 @@ jobs:
         run: |
           $terminalSettingsContent = ConvertFrom-Json -InputObject (Get-Content -Path '.\terminal\settings.json' -Raw);
           $profilesIconsInThisRepo = $terminalSettingsContent.profiles.list.icon | Where-Object {
-            $_ -like '*/davide-pi/utilities/refs/heads/main/terminal/icons/*';
+            $_ -like 'http*'
           }
 
           if ( $profilesIconsInThisRepo.Length -eq 0) {
-              Write-Host 'No icons to check';
-              exit 0;
+            Write-Host 'No icons to check';
+            exit 0;
           }
 
           $profilesIconsInThisRepo | ForEach-Object {
-            $iconRelativePath = [regex]::Match($_, 'terminal/icons/.*').Value
-            if (-not (Test-Path -Path "./$($iconRelativePath)")) {
-              Write-Host "Icon $($iconRelativePath) not found";
+            $result = Invoke-WebRequest -Method Get -Uri $_ -SkipHttpErrorCheck
+
+            if ($result.StatusCode -ne 200) {
+              Write-Host "Icon at '$($_)' not found";
               exit 1;
             }
           }
