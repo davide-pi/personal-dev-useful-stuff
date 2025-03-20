@@ -1,4 +1,4 @@
-name: CI Terminal Icons
+name: CI Terminal Settings
 
 on:
   push:
