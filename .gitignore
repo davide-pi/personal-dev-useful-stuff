@@ -1,0 +1,38 @@
+# .gitignore
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore node modules
+node_modules/
+
+# Ignore VSCode settings
+.vscode/
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore logs
+*.log
+
+# Ignore environment files
+.env
+
+# Ignore compiled binaries
+*.exe
+*.dll
+*.obj
+*.so
+*.out
+
+# Ignore user-specific files
+*.swp
+*.swo
+*.bak
+
+# Ignore PowerShell history
+ConsoleHost_history.txt
+
+# Ignore Windows Terminal generated files
+*.tmp
