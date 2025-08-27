@@ -2,17 +2,8 @@
 $OutputEncoding = [console]::InputEncoding = [console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
 
 # Loads modules
-$modules = @('posh-git', 'PwshSpectreConsole')
-foreach ($module in $modules) {
-    if (-not (Get-Module -ListAvailable -Name $module)) {
-        try {
-            Install-Module -Name $module -Scope CurrentUser -Force -ErrorAction Stop
-        } catch {
-            Write-Error "Failed to install module '$module': $_"
-        }
-    }
-    Import-Module $module -ErrorAction SilentlyContinue
-}
+Import-Module posh-git -ErrorAction SilentlyContinue
+Import-Module PwshSpectreConsole -ErrorAction SilentlyContinue
 
 # Customizes the prompt style with timestamp, colors, and abbreviations.
 function Set-PoshGitStyle {
@@ -28,6 +19,7 @@ function Set-PoshGitStyle {
 
 Set-PoshGitStyle
 
+# Function to compare local branches against origin/master and display how many commits they are behind.
 function Test-CommitsBehindCount {
     $remoteBranches = Invoke-SpectreCommandWithStatus -Spinner "Dots2" -Title "Comparing branches..." -ScriptBlock {
         Write-SpectreHost "[grey]Fetching...[/]"
