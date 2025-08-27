@@ -21,13 +21,13 @@ Set-PoshGitStyle
 
 # Function to compare local branches against origin/master and display how many commits they are behind.
 function Test-CommitsBehindCount {
-    $remoteBranches = Invoke-SpectreCommandWithStatus -Spinner "Dots2" -Title "Comparing branches..." -ScriptBlock {
+    $remoteBranches = Invoke-SpectreCommandWithStatus -Spinner "Dots2" -Title "Get branches..." -ScriptBlock {
         Write-SpectreHost "[grey]Fetching...[/]"
         git fetch --all --prune
 
         Write-SpectreHost "[grey]Getting origin branches list...[/]"
         $remoteBranches = git branch -r | Where-Object {
-            ($_ -notmatch 'HEAD') -and ($_ -notmatch "/master$")
+            ($_ -notmatch 'HEAD')
         } | ForEach-Object {
             ($_ -replace 'origin/', '').Trim()
         }
@@ -41,13 +41,28 @@ function Test-CommitsBehindCount {
             [Spectre.Console.ProgressContext] $Context
         )
 
+        $mainBranch = $remoteBranches | Where-Object {
+            ($_ -match "^master$") -or ($_ -match "^main$")
+        }
+
+        $branchesToCompare = $remoteBranches | Where-Object {
+            ($_ -notmatch "^master$") -and ($_ -notmatch "^main$")
+        }
+
+        if ($branchesToCompare.Count -eq 0) {
+            Write-SpectreHost "[yellow]No branches to compare.[/]"
+            return @()
+        }
+
         $task = $Context.AddTask("Comparing branches")
 
         $behindCountData = @()
-        foreach ($branch in $remoteBranches) {
-            $task.Increment(100 / $remoteBranches.Count)
+        $increment = 100 / $branchesToCompare.Count
+
+        foreach ($branch in $branchesToCompare) {
+            $task.Increment($increment)
             try {
-                $behindCount = git rev-list --left-right --count origin/$branch..origin/master | ForEach-Object {
+                $behindCount = git rev-list --left-right --count origin/$branch..origin/$mainBranch | ForEach-Object {
                     $parts = $_ -split "`t"
                     if ($parts.Length -eq 2) { [int]$parts[1] } else { 0 }
                 }
@@ -60,11 +75,16 @@ function Test-CommitsBehindCount {
                 $_ | Format-SpectreException -ExceptionFormat ShortenEverything
             }
         }
-        $task.Increment(100 / $remoteBranches.Count)
+
+        $task.Increment($increment)
 
         return $behindCountData
     }
 
+    if ($result.Count -eq 0) {
+        Write-SpectreHost "[yellow]No data to display.[/]"
+        return
+    }
 
     $result | ForEach-Object {
         $color = [Spectre.Console.Color]::White
