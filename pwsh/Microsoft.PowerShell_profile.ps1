@@ -1,5 +1,9 @@
-# Loads posh-git for enhanced git prompt support in PowerShell.
-Import-Module posh-git
+# HACK: needed by PwshSpectreConsole, otherwise some functionality could not work properly
+$OutputEncoding = [console]::InputEncoding = [console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
+
+# Loads modules
+Import-Module posh-git -ErrorAction SilentlyContinue
+Import-Module PwshSpectreConsole -ErrorAction SilentlyContinue
 
 # Customizes the prompt style with timestamp, colors, and abbreviations.
 function Set-PoshGitStyle {
@@ -14,5 +18,85 @@ function Set-PoshGitStyle {
 }
 
 Set-PoshGitStyle
+
+# Function to compare local branches against origin/master and display how many commits they are behind.
+function Test-CommitsBehindCount {
+    $remoteBranches = Invoke-SpectreCommandWithStatus -Spinner "Dots2" -Title "Get branches..." -ScriptBlock {
+        Write-SpectreHost "[grey]Fetching...[/]"
+        git fetch --all --prune
+
+        Write-SpectreHost "[grey]Getting origin branches list...[/]"
+        $remoteBranches = git branch -r | Where-Object {
+            ($_ -notmatch 'HEAD')
+        } | ForEach-Object {
+            ($_ -replace 'origin/', '').Trim()
+        }
+
+        return $remoteBranches
+    }
+
+
+    $result = Invoke-SpectreCommandWithProgress -ScriptBlock {
+        param (
+            [Spectre.Console.ProgressContext] $Context
+        )
+
+        $mainBranch = $remoteBranches | Where-Object {
+            ($_ -match "^master$") -or ($_ -match "^main$")
+        }
+
+        $branchesToCompare = $remoteBranches | Where-Object {
+            ($_ -notmatch "^master$") -and ($_ -notmatch "^main$")
+        }
+
+        if ($branchesToCompare.Count -eq 0) {
+            Write-SpectreHost "[yellow]No branches to compare.[/]"
+            return @()
+        }
+
+        $task = $Context.AddTask("Comparing branches")
+
+        $behindCountData = @()
+        $increment = 100 / $branchesToCompare.Count
+
+        foreach ($branch in $branchesToCompare) {
+            $task.Increment($increment)
+            try {
+                $behindCount = git rev-list --left-right --count origin/$branch..origin/$mainBranch | ForEach-Object {
+                    $parts = $_ -split "`t"
+                    if ($parts.Length -eq 2) { [int]$parts[1] } else { 0 }
+                }
+                $behindCountData += [pscustomobject] @{
+                    Label = "origin/$branch"
+                    Value = $behindCount
+                }
+            }
+            catch {
+                $_ | Format-SpectreException -ExceptionFormat ShortenEverything
+            }
+        }
+
+        $task.Increment($increment)
+
+        return $behindCountData
+    }
+
+    if ($result.Count -eq 0) {
+        Write-SpectreHost "[yellow]No data to display.[/]"
+        return
+    }
+
+    $result | ForEach-Object {
+        $color = [Spectre.Console.Color]::White
+        switch ($_.Value) {
+            { $_ -eq 0 } { $color = [Spectre.Console.Color]::Green1; break }
+            { $_ -lt 3 } { $color = [Spectre.Console.Color]::Yellow1; break }
+            { $_ -lt 5 } { $color = [Spectre.Console.Color]::Orange1; break }
+            default { $color = [Spectre.Console.Color]::OrangeRed1 }
+        }
+
+        return New-SpectreChartItem -Label "$($_.Label)" -Value $_.Value -Color $color
+    } | Format-SpectreBarChart
+}
 
 # Add more module imports or customizations below as needed.
